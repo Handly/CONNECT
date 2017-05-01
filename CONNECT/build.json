@@ -1,11 +1,18 @@
 {
-     "android": {
-         "release": {
-             "keystore": "",
-             "storePassword": "",
-             "alias": "",
-             "password" : "",
-             "keystoreType": ""
-         }
-     }
- }
+  "android": {
+    "release": {
+      "keystore": "",
+      "storePassword": "",
+      "alias": "",
+      "password": "",
+      "keystoreType": ""
+    }
+  },
+
+  "ios": {
+    "debug": {
+      "developmentTeam": "HPPKW99X86"
+    }
+  }
+
+}
