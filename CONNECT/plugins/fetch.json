@@ -15,18 +15,18 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-bluetooth-serial": {
+    "cordova-plugin-ble-central": {
         "source": {
             "type": "local",
-            "path": "C:\\Users\\Lanyon\\Downloads\\BluetoothSerial-master\\BluetoothSerial-master"
+            "path": "C:\\Users\\Lanyon\\Downloads\\basic-bluetoothle-master\\basic-bluetoothle-master\\plugins\\cordova-plugin-ble-central"
         },
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-bluetoothle": {
+    "cordova-plugin-compat": {
         "source": {
-            "type": "registry",
-            "id": "cordova-plugin-bluetoothle@4.3.2"
+            "type": "local",
+            "path": "C:\\Users\\Lanyon\\Downloads\\basic-bluetoothle-master\\basic-bluetoothle-master\\plugins\\cordova-plugin-compat"
         },
         "is_top_level": true,
         "variables": {}
