@@ -198,6 +198,7 @@
 
         var service_id = '49535343-FE7D-4AE5-8FA9-9FAFD205E455';
         var characteristic_id = '49535343-1E4D-4BD9-BA61-23C647249616';
+        var device_id;
 
         $(document).on('pagebeforeshow', '#bluetooth', function () {
 
@@ -210,8 +211,8 @@
 
             $('#deviceList').one('click', 'a.current', function (device) {
                 console.log("connecting to device with id = " + $(this).attr('data-deviceid'));
-                var device_id = $(this).attr('data-deviceid');
-                ble.connect(device_id, function () { startNotification(device_id) }, function () { console.log("failed to connect") });
+                device_id = $(this).attr('data-deviceid');
+                ble.connect(device_id, function () { startNotification(device_id) }, function () { alert("Board is disconnected!") });
                 
 
             });
@@ -222,6 +223,9 @@
 
         }
 
+        var sendSource = null;
+        var sendTarget = null;
+
         function startNotification(device_id) {
             console.log("I should be starting notification now with device: " + device_id + " and service_id: " + service_id + " and with char_id: " + characteristic_id);
             var onData = function (buffer) {
@@ -229,12 +233,33 @@
                 var data = new Uint8Array(buffer);
 
                 document.getElementById("asdf").innerHTML = (data[0]);
+                if (data[0] == writeTarget)
+                    clearInterval(writer);
+
+                if (squares[data[0]] in dests)
+                    sendSource = squares[data[0]];
+                else if (sendSource != null)
+                    console.log(dests.sendSource);
+                    //if (dests.sendSource.includes(squares[data[0]]))
+                    //    sendTarget = squares[data[0]];
+
+                if (sendSource != null && sendTarget != null) {
+                    console.log("sending move "+sendSource+""+sendTarget);
+                    sendMove(sendSource, sendTarget);
+                    sendSource = null;
+                    sendTarget = null;
+                }
+
             }
             ble.startNotification(device_id,
                   service_id,
                   characteristic_id, onData, function () { console.log("failure to start notification") });
 
             
+        }
+
+        function disconnectDevice() {
+            ble.disconnect(device_id);
         }
 
     </script>

@@ -164,7 +164,7 @@ function gameConnect(fullID) {
 
                             board.position(eventData.d.fen);
 
-
+                            dests = eventData.d.dests;
                         }
                         else if (eventData.t == "b") {
                             for (var i = 0; i < eventData.d.length; i++) {
@@ -176,7 +176,7 @@ function gameConnect(fullID) {
 
                                     board.position(eventData.d[i].d.fen);
 
-
+                                    dests = eventData.d[i].d.dests;
                                 }
                                 else if (eventData.d[i].t == "end") {
                                     console.log("End event received");
@@ -187,7 +187,12 @@ function gameConnect(fullID) {
 
                         }
                         if (lastMove != latestMove && latestMove != sentMove) {
-                            bluetoothSerial.write(latestMove);
+
+                            window.writer = setInterval(lightLED, 250);
+
+                            writeSource = squares.indexOf(latestMove.slice(0, 2));
+                            writeTarget = squares.indexOf(latestMove.slice(2, 4));
+
                             lastMove = latestMove;
                         }
                     }
@@ -216,6 +221,32 @@ function gameConnect(fullID) {
 
         }
     }
+}
+
+let dests = new Object();
+
+var writeSource;
+var writeTarget;
+
+var squares = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+                "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+                "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+                "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+                "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+                "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+                "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+                "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", ];
+
+var data = new Uint8Array(1);
+
+var lightLED = function () {
+    if (data[0] == writeSource)
+        data[0] = writeTarget;
+    else
+        data[0] = writeSource;
+    console.log("I should be writing " + data[0] + " to: " + device_id + " and service_id: " + service_id + " and with char_id: " + characteristic_id);
+
+    ble.write(device_id, service_id, characteristic_id, data.buffer);
 }
 
 function sendMove(source, target) {

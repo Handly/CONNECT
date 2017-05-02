@@ -25,6 +25,10 @@
 
         $('#createOTBGame-btn').click(createOTBGame);
 
+        $('#refreshButton').click(loadDeviceList);
+
+        $('#disconnectButton').click(disconnectDevice);
+
 
         // Handle the Cordova pause and resume events
         document.addEventListener('pause', onPause.bind(this), false);
