@@ -213,7 +213,7 @@
                 console.log("connecting to device with id = " + $(this).attr('data-deviceid'));
                 device_id = $(this).attr('data-deviceid');
                 ble.connect(device_id, function () { startNotification(device_id) }, function () { alert("Board is disconnected!") });
-                
+
 
             });
 
@@ -236,15 +236,19 @@
                 if (data[0] == writeTarget)
                     clearInterval(writer);
 
-                if (squares[data[0]] in dests)
+                if (squares[data[0]] in dests) {
                     sendSource = squares[data[0]];
+                    console.log("sendSource is now " + sendSource);
+
+                }
                 else if (sendSource != null)
-                    console.log(dests.sendSource);
-                    //if (dests.sendSource.includes(squares[data[0]]))
-                    //    sendTarget = squares[data[0]];
+                    if (dests[sendSource].includes(squares[data[0]])) {
+                        sendTarget = squares[data[0]];
+                        console.log("sendTarget is now " + sendTarget);
+                    }
 
                 if (sendSource != null && sendTarget != null) {
-                    console.log("sending move "+sendSource+""+sendTarget);
+                    console.log("sending move " + sendSource + "" + sendTarget);
                     sendMove(sendSource, sendTarget);
                     sendSource = null;
                     sendTarget = null;
@@ -255,7 +259,7 @@
                   service_id,
                   characteristic_id, onData, function () { console.log("failure to start notification") });
 
-            
+
         }
 
         function disconnectDevice() {

@@ -124,6 +124,12 @@ function gameConnect(fullID) {
 
                 window.pinger = setInterval(function () {
 
+                    // do this once to get more info (such as dests, etc)
+                    socket.send(JSON.stringify({
+                        t: 'p',
+                        v: version-1
+                    }));
+
                     socket.send(JSON.stringify({
                         t: 'p',
                         v: version
