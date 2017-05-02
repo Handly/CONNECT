@@ -49,9 +49,7 @@
         }
       );
 
-        ble.scan([], 5, function (device) {
-            alert(device.id);
-        }, console.log('Could not find board'));
+
 
     };
 
