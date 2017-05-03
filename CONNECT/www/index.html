@@ -146,6 +146,15 @@
                 console.log("connecting to game with id = " + $(this).attr('data-gameid'));
                 cfg.onDrop = eval($(this).attr('data-gametype'));
                 gameConnect($(this).attr('data-gameid'));
+
+                var writeTargetInit;
+
+               // writeSource = squares.indexOf($(this).attr('data-lastmove').slice(0, 2));
+                writeTargetInit = squares.indexOf($(this).attr('data-lastmove').slice(2, 4));
+                var data = new Uint8Array(1);
+                data[0] = writeTargetInit;
+
+                ble.write(device_id, service_id, characteristic_id, data.buffer);
             });
 
             var xhttp = new XMLHttpRequest();
@@ -161,9 +170,9 @@
 
                     for (var i = 0; i < games.length; i++) {
                         if (i % 2 == 0)
-                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-right: -10px; float: right'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
+                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-right: -10px; float: right'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
                         else
-                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-left: -10px; float: left'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
+                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-left: -10px; float: left'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
 
                         var board = ChessBoard('board' + i, {
                             position: games[i].fen,
@@ -233,6 +242,7 @@
                 var data = new Uint8Array(buffer);
 
                 document.getElementById("asdf").innerHTML = (data[0]);
+                console.log("if "+data[0]+" equals "+writeTarget+", blinking should stop");
                 if (data[0] == writeTarget)
                     clearInterval(writer);
 

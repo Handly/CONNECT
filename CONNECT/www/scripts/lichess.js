@@ -109,6 +109,8 @@ function gameConnect(fullID) {
 
             window.version = gameInfo.player.version;
 
+            dests = gameInfo.possibleMoves;
+
             var baseUrl = gameInfo.url.socket; // obtained from game creation API (`url.socket`)
             clientId = Math.random().toString(36).substring(2); // created and stored by the client
 
@@ -123,12 +125,6 @@ function gameConnect(fullID) {
             socket.onopen = function () {
 
                 window.pinger = setInterval(function () {
-
-                    // do this once to get more info (such as dests, etc)
-                    socket.send(JSON.stringify({
-                        t: 'p',
-                        v: version-1
-                    }));
 
                     socket.send(JSON.stringify({
                         t: 'p',
@@ -243,16 +239,16 @@ var squares = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
                 "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
                 "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", ];
 
-var data = new Uint8Array(1);
+var data2 = new Uint8Array(1);
 
 var lightLED = function () {
-    if (data[0] == writeSource)
-        data[0] = writeTarget;
+    if (data2[0] == writeSource)
+        data2[0] = writeTarget;
     else
-        data[0] = writeSource;
-    console.log("I should be writing " + data[0] + " to: " + device_id + " and service_id: " + service_id + " and with char_id: " + characteristic_id);
+        data2[0] = writeSource;
+    //console.log("I should be writing " + data2[0] + " to: " + device_id + " and service_id: " + service_id + " and with char_id: " + characteristic_id);
 
-    ble.write(device_id, service_id, characteristic_id, data.buffer);
+    ble.write(device_id, service_id, characteristic_id, data2.buffer);
 }
 
 function sendMove(source, target) {
