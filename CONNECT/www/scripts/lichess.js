@@ -111,6 +111,22 @@ function gameConnect(fullID) {
 
             dests = gameInfo.possibleMoves;
 
+            gameObject.player = gameInfo.game.player;
+            gameObject.myColor = gameInfo.player.color;
+
+            if ('clock' in gameInfo) {
+                gameObject.timeStamp = Date.now();
+                gameObject.bClock = gameInfo.clock.black;
+                gameObject.wClock = gameInfo.clock.white;
+
+                gameObject.clock = gameInfo.clock.running;
+
+                updateClocks(true);
+
+                window.decrementer = setInterval(function () { updateClocks() }, 100);
+
+            }
+
             var baseUrl = gameInfo.url.socket; // obtained from game creation API (`url.socket`)
             clientId = Math.random().toString(36).substring(2); // created and stored by the client
 
@@ -126,15 +142,7 @@ function gameConnect(fullID) {
 
                 window.pinger = setInterval(function () {
 
-                    socket.send(JSON.stringify({
-                        t: 'p',
-                        v: version
-                    }));
-
-                    console.log(JSON.stringify({
-                        t: 'p',
-                        v: version
-                    }));
+                    ping();
 
                 }, 2000);
 
@@ -142,12 +150,18 @@ function gameConnect(fullID) {
 
             socket.onmessage = function (event) {
 
+
                 console.log(event.data);
+
                 var eventData = JSON.parse(event.data);
 
                 if (eventData.hasOwnProperty("t")) {
 
                     if (eventData.t != "n") {
+                        if (eventData.t == "b") {
+                            eventData = eventData.d[0];
+
+                        }
                         if (awaitingAck && eventData.t != "ack") {
                             console.log("resending move...");
                             sendMove();
@@ -162,45 +176,49 @@ function gameConnect(fullID) {
 
                         }
                         else if (eventData.t == "move") {
+
+                            gameObject.timeStamp = Date.now();
+
                             latestMove = eventData.d.uci;
 
                             board.position(eventData.d.fen);
 
                             dests = eventData.d.dests;
-                        }
-                        else if (eventData.t == "b") {
-                            for (var i = 0; i < eventData.d.length; i++) {
-                                if (eventData.d[i].hasOwnProperty("v")) {
-                                    version = eventData.d[i].v;
-                                }
-                                if (eventData.d[i].t == "move") {
-                                    latestMove = eventData.d[i].d.uci;
 
-                                    board.position(eventData.d[i].d.fen);
+                            gameObject.player = (eventData.d.ply % 2 == 1) ? 'black' : 'white';
 
-                                    dests = eventData.d[i].d.dests;
-                                }
-                                else if (eventData.d[i].t == "end") {
-                                    console.log("End event received");
-                                    var winningColor = eventData.d[i].d;
-                                    var winnerDisplay = setTimeout(function () { alert(winningColor + " wins!"); }, 1000);
-                                }
+                            if ('clock' in eventData.d) {
+                                gameObject.wClock = eventData.d.clock.white;
+                                gameObject.bClock = eventData.d.clock.black;
+                                updateClocks(true);
+                                gameObject.clock = (eventData.d.ply > 1) ? true : false;
                             }
-
                         }
-                        if (lastMove != latestMove && latestMove != sentMove) {
+                        else if (eventData.t == "end") {
+                            if (gameObject.clock)
+                                clearInterval(decrementer);
 
-                            window.writer = setInterval(lightLED, 250);
-
-                            writeSource = squares.indexOf(latestMove.slice(0, 2));
-                            writeTarget = squares.indexOf(latestMove.slice(2, 4));
-
-                            lastMove = latestMove;
+                            if ('d' in eventData) {
+                                document.getElementById("overTime").innerHTML = eventData.d;
+                                document.getElementById("underTime").innerHTML = "wins";
+                            }
+                            else {
+                                document.getElementById("overTime").innerHTML = "draw";
+                                document.getElementById("underTime").innerHTML = "game";
+                            }
                         }
+                        if (eventData.hasOwnProperty("v")) {
+                            version = eventData.v;
+                        }
+                        if (latestMove != null)
+                            if (gameObject.player == gameObject.myColor) {
+
+                                window.writer = setInterval(lightLED, 250);
+
+                                writeSource = squares.indexOf(latestMove.slice(0, 2));
+                                writeTarget = squares.indexOf(latestMove.slice(2, 4));
+                            }
                     }
-                }
-                if (eventData.hasOwnProperty("v")) {
-                    version = eventData.v;
                 }
             };
 
@@ -211,6 +229,8 @@ function gameConnect(fullID) {
             socket.onclose = function (event) {
                 clearInterval(pinger);
                 pinger = null;
+                if (gameObject.clock)
+                    clearInterval(decrementer);
                 console.log("socketClosed!");
 
             };
@@ -224,6 +244,64 @@ function gameConnect(fullID) {
         }
     }
 }
+
+var blacks;
+var whites;
+
+let gameObject = new Object();
+gameObject = {
+    'clock': false,
+    'player': 'white',
+    'bClock': 0,
+    'wClock': 0,
+    'myColor': 'white',
+    'timeStamp': 0,
+};
+
+function updateClocks(init) {
+
+    if (gameObject.clock || init) {
+
+        if (gameObject.player == "black" || init) {
+
+            blacks = gameObject.bClock - Math.floor((Date.now() - gameObject.timeStamp) / 1000);
+            if (blacks < 0)
+                blacks = 0;
+            bHours = Math.floor(blacks / 3600);
+            if (bHours < 10)
+                bHours = "0" + bHours;
+            bMins = Math.floor(blacks % 3600 / 60);
+            if (bMins < 10)
+                bMins = "0" + bMins;
+            bSecs = Math.floor(blacks % 60);
+            if (bSecs < 10)
+                bSecs = "0" + bSecs;
+            whichClock = (gameObject.myColor == "white") ? "overTime" : "underTime";
+            document.getElementById(whichClock).innerHTML = (bHours + ":" + bMins + ":" + bSecs);
+        }
+
+        if (gameObject.player == "white" || init) {
+
+            whites = gameObject.wClock - Math.floor((Date.now() - gameObject.timeStamp) / 1000);
+            if (whites < 0)
+                whites = 0;
+            wHours = Math.floor(whites / 3600);
+            if (wHours < 10)
+                wHours = "0" + wHours;
+            wMins = Math.floor(whites % 3600 / 60);
+            if (wMins < 10)
+                wMins = "0" + wMins;
+            wSecs = Math.floor(whites % 60);
+            if (wSecs < 10)
+                wSecs = "0" + wSecs;
+            whichClock = (gameObject.myColor == "black") ? "overTime" : "underTime";
+            document.getElementById(whichClock).innerHTML = (wHours + ":" + wMins + ":" + wSecs);
+        }
+
+    }
+
+}
+
 
 let dests = new Object();
 
@@ -289,4 +367,18 @@ function syncFEN() {
         }
     };
     xhttp.send();
+}
+
+function ping() {
+
+    socket.send(JSON.stringify({
+        t: 'p',
+        v: version
+    }));
+
+    console.log(JSON.stringify({
+        t: 'p',
+        v: version
+    }));
+
 }

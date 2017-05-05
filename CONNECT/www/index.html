@@ -32,6 +32,11 @@
             background-image: url("img/lichess.svg");
             background-size: 18px 18px;
         }
+
+        @font-face {
+            font-family: 'digital-clock-font';
+            src: url('digital-7.mono.ttf');
+        }
     </style>
 
 </head>
@@ -145,11 +150,12 @@
             $('#gameList').one('click', 'a.current', function () {
                 console.log("connecting to game with id = " + $(this).attr('data-gameid'));
                 cfg.onDrop = eval($(this).attr('data-gametype'));
+                cfg.orientation = $(this).attr('data-orientation');
                 gameConnect($(this).attr('data-gameid'));
 
                 var writeTargetInit;
 
-               // writeSource = squares.indexOf($(this).attr('data-lastmove').slice(0, 2));
+                // writeSource = squares.indexOf($(this).attr('data-lastmove').slice(0, 2));
                 writeTargetInit = squares.indexOf($(this).attr('data-lastmove').slice(2, 4));
                 var data = new Uint8Array(1);
                 data[0] = writeTargetInit;
@@ -170,12 +176,13 @@
 
                     for (var i = 0; i < games.length; i++) {
                         if (i % 2 == 0)
-                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-right: -10px; float: right'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
+                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-orientation='" + games[i].color + "' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-right: -10px; float: right'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
                         else
-                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-left: -10px; float: left'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
+                            $("#gameList").append("<a style='text-decoration:none' href='#chessboard' class='current' data-gametype='lichess' data-orientation='" + games[i].color + "' data-lastmove='" + games[i].lastMove + "' data-gameid='" + games[i].fullId + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><div id='board" + i + "' style='width: 125px; margin-top: -5px; margin-left: -10px; float: left'></div><h2 style='color: #ffffff; text-shadow: none'>" + games[i].opponent.username + "</h2><p style='color: #ffffff; text-shadow: none'>lichess &middot; tap to play</p></div></a><div style='clear:both'></div><br />");
 
                         var board = ChessBoard('board' + i, {
                             position: games[i].fen,
+                            orientation: games[i].color,
                             showNotation: false
                         });
                     }
@@ -242,7 +249,7 @@
                 var data = new Uint8Array(buffer);
 
                 document.getElementById("asdf").innerHTML = (data[0]);
-                console.log("if "+data[0]+" equals "+writeTarget+", blinking should stop");
+                console.log("if " + data[0] + " equals " + writeTarget + ", blinking should stop");
                 if (data[0] == writeTarget)
                     clearInterval(writer);
 
@@ -360,9 +367,19 @@
     <div data-role="page" id="chessboard" data-theme="a">
 
         <div role="main">
+            <div id="overBoard" style="overflow:hidden;font-family:'digital-clock-font'">
+                <div id="overTime" style="margin: 0px 20px; color: #ffffff; padding: 5px; background-color: rgba(0, 0, 0, 0.3); border-radius: 5px; font-size: 70px; position: relative; top: 50%; text-align: center; transform: perspective(1px) translateY(-50%);">
+                    
+                </div>
+            </div>
             <!-- start example HTML -->
             <div id="board" style="width: 100%"></div>
             <!-- end example HTML -->
+            <div id="underBoard" style="overflow:hidden;font-family:'digital-clock-font'">
+                <div id="underTime" style="margin: 0px 20px; color: #ffffff; padding: 5px; background-color: rgba(0, 0, 0, 0.3); border-radius: 5px; font-size: 70px; position: relative; top: 50%; text-align: center; transform: perspective(1px) translateY(-50%);">
+                    
+                </div>
+            </div>
         </div>
     </div>
 
@@ -410,7 +427,11 @@
 
         }; // end init()
 
-        $(document).on('pageshow', '#chessboard', function () { init(cfg) });
+        $(document).on('pageshow', '#chessboard', function () {
+            init(cfg);
+            $("#overBoard").height(($(window).height() - $(window).width()) / 2);
+            $("#underBoard").height(($(window).height() - $(window).width()) / 2);
+        });
         $(document).on('pagehide', '#chessboard', function () { if (typeof socket != 'undefined') socket.close(); board.clear(false) });
     </script>
     <script type="text/javascript" src="cordova.js"></script>
