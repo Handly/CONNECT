@@ -9,6 +9,8 @@
 
     function onDeviceReady() {
 
+        StatusBar.hide();
+
         $("form").submit(function (e) {
             e.preventDefault();
         });

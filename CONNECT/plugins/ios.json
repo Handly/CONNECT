@@ -19,6 +19,9 @@
         },
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "io.cordova.myappdbd4a7"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "io.cordova.myappdbd4a7"
         }
     },
     "dependent_plugins": {}

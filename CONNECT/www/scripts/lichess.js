@@ -115,13 +115,14 @@ function gameConnect(fullID) {
             gameObject.myColor = gameInfo.player.color;
 
             if ('clock' in gameInfo) {
+                gameObject.timed = true;
                 gameObject.timeStamp = Date.now();
                 gameObject.bClock = gameInfo.clock.black;
                 gameObject.wClock = gameInfo.clock.white;
 
                 gameObject.clock = gameInfo.clock.running;
 
-                updateClocks(true);
+                updateClocks(init);
 
                 window.decrementer = setInterval(function () { updateClocks() }, 100);
 
@@ -248,15 +249,7 @@ function gameConnect(fullID) {
 var blacks;
 var whites;
 
-let gameObject = new Object();
-gameObject = {
-    'clock': false,
-    'player': 'white',
-    'bClock': 0,
-    'wClock': 0,
-    'myColor': 'white',
-    'timeStamp': 0,
-};
+
 
 function updateClocks(init) {
 

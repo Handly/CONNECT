@@ -111,4 +111,7 @@
   <plugin name="cordova-plugin-compat" version="1.1.0" src="C:\Users\Lanyon\Downloads\basic-bluetoothle-master\basic-bluetoothle-master\plugins\cordova-plugin-compat" />
   <preference name="Orientation" value="portrait" />
   <preference name="Fullscreen" value="True" />
+  <plugin name="cordova-plugin-statusbar" version="2.2.4-dev" src="https://github.com/apache/cordova-plugin-statusbar.git" />
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="UIWebViewBounce" value="false" />
 </widget>
