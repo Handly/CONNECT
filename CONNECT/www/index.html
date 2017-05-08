@@ -141,6 +141,7 @@
         $(document).on('pagebeforeshow', '#home', function () {
 
             loadGameList();
+            document.getElementById("asdf").innerHTML = "...";
 
         });
 
@@ -252,6 +253,7 @@
 
             $('#deviceList').one('click', 'a.current', function (device) {
                 console.log("connecting to device with id = " + $(this).attr('data-deviceid'));
+                document.getElementById("asdf").innerHTML = "Connecting...";
                 device_id = $(this).attr('data-deviceid');
                 ble.connect(device_id, function () { startNotification(device_id) }, function () { alert("Board is disconnected!") });
 
@@ -269,17 +271,23 @@
 
         function startNotification(device_id) {
             console.log("I should be starting notification now with device: " + device_id + " and service_id: " + service_id + " and with char_id: " + characteristic_id);
+            document.getElementById("asdf").innerHTML = "Ready";
             var onData = function (buffer) {
                 // Decode the ArrayBuffer into a typed Array based on the data you expect
                 var data = new Uint8Array(buffer);
 
                 document.getElementById("asdf").innerHTML = (data[0]);
                 console.log("if " + data[0] + " equals " + writeTarget + ", blinking should stop");
-                if (data[0] == writeTarget)
+                if (data[0] == writeTarget) {
                     clearInterval(writer);
+                    latestMove = null;
+                }
 
                 if (squares[data[0]] in dests) {
                     sendSource = squares[data[0]];
+                    clearInterval(writer);
+                    latestMove = null;
+                    ble.write(device_id, service_id, characteristic_id, data.buffer);
                     console.log("sendSource is now " + sendSource);
 
                 }

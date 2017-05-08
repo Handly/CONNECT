@@ -80,6 +80,8 @@ lastMove = null;
 
 latestMove = null;
 
+writer = null;
+
 function gameConnect(fullID) {
 
     if (pinger == null) {
@@ -196,8 +198,12 @@ function gameConnect(fullID) {
                             }
                         }
                         else if (eventData.t == "end") {
-                            if (gameObject.clock)
+                            if (gameObject.clock) {
                                 clearInterval(decrementer);
+                                gameObject.clock = false;
+                                clearInterval(writer);
+                                latestMove = null;
+                            }
 
                             if ('d' in eventData) {
                                 document.getElementById("overTime").innerHTML = eventData.d;
@@ -214,7 +220,8 @@ function gameConnect(fullID) {
                         if (latestMove != null)
                             if (gameObject.player == gameObject.myColor) {
 
-                                window.writer = setInterval(lightLED, 250);
+                                if(clearInterval(writer)); // make sure cleared before setting
+                                writer = setInterval(lightLED, 250);
 
                                 writeSource = squares.indexOf(latestMove.slice(0, 2));
                                 writeTarget = squares.indexOf(latestMove.slice(2, 4));
