@@ -37,6 +37,7 @@
             font-family: 'digital-clock-font';
             src: url('digital-7.mono.ttf');
         }
+
     </style>
 
 </head>
@@ -151,6 +152,10 @@
             $("#gameList").html("");
 
             $('#gameList').one('click', 'a.current', function () {
+
+
+                
+
                 console.log("connecting to game with id = " + $(this).attr('data-gameid'));
                 cfg.onDrop = eval($(this).attr('data-gametype'));
                 cfg.orientation = $(this).attr('data-orientation');
@@ -187,6 +192,11 @@
                     gameObject.timed = true;
                 else
                     gameObject.timed = false;
+
+
+
+
+
             });
 
             var xhttp = new XMLHttpRequest();
@@ -396,11 +406,48 @@
         </div>
     </div>
 
-
     <div data-role="page" id="chessboard" data-theme="a">
 
+        <div id="drawMenu" style="height:100%; width:100%; background-color: rgba(255,255,255,0.90); position:absolute;top:0;left:0;z-index:1000;text-align: center;font-size:32px;display:none">
+            <div style="position: relative;top: 50%;transform: perspective(1px) translateY(-50%);margin: auto;">
+                <b>Accept Draw?</b><br /><br />
+                <span>
+                    <span style="margin: 1em; color: #00bb00"><b>Yes</b></span>
+                    <span style="margin: 1em; color: #ff0000"><b>No</b></span>
+                </span>
+
+            </div>
+        </div>
+
+        <div id="endMenu" style="height:100%; width:100%; background-color: rgba(255,255,255,0.90); position:absolute;top:0;left:0;z-index:1000;text-align: center;font-size:32px;display:none">
+            <div style="position: relative;top: 50%;transform: perspective(1px) translateY(-50%);margin: auto;">
+                <span style="font-size:1.25em;margin: 1em;border:none;border-bottom:2px solid;padding: .3em;"><b>Game Over</b></span>
+                <br /><br /><br />
+                <a style="text-decoration:none" href="#home"><b style="color:#008aff" onclick="rematch()">Rematch</b></a>
+                <br /><br />
+                <a id="analyzeLink" style="text-decoration:none" href=""><b style="color:#008aff">Analyze</b></a>
+                <br /><br />
+                <br /><br />
+                <a style="text-decoration:none" href="#home"><b style="color:#000000;font-size:.75em;">Home</b></a>
+            </div>
+        </div>
+
+        <div id="gameMenu" style="height:100%; width:100%; background-color: rgba(255,255,255,0.90); position:absolute;top:0;left:0;z-index:1000;text-align: center;font-size:32px;display:none">
+            <span id="gameMenuX" style="float: right;font-size:2em;line-height:0px;position:relative;top:32px;right:5px;font-weight:200">X</span>
+            <div style="position: relative;top: 50%;transform: perspective(1px) translateY(-50%);margin: auto;">
+                <span style="font-size:1.25em;margin: 1em;border:none;border-bottom:2px solid;padding: .3em;margin-top:0px;line-height:0px"><b>Game Menu</b></span>
+                <br /><br /><br />
+                <b style="color:#008aff" onclick="(function () { document.getElementById('gameMenu').style.display = 'none'; resign() })();">Resign</b>
+                <br /><br />
+                <b style="color:#008aff;" onclick="takeback()">Propose Takeback</b>
+                <br /><br />
+                <br /><br />
+                <a style="text-decoration:none" href="#home"><b style="color:#000000;font-size:.75em;">Home</b></a>
+            </div>
+        </div>
+
         <div role="main">
-            <div id="overBoard" style="overflow:hidden;font-family:'digital-clock-font'">
+            <div id="overBoard" style="overflow:hidden;font-family:'digital-clock-font';">
                 <div id="overTime" style="margin: 0px 20px; color: #ffffff; padding: 5px; background-color: rgba(0, 0, 0, 0.3); border-radius: 5px; font-size: 70px; position: relative; top: 50%; text-align: center; transform: perspective(1px) translateY(-50%);">
                     &nbsp;
                 </div>
@@ -408,7 +455,7 @@
             <!-- start example HTML -->
             <div id="board" style="width: 100%"></div>
             <!-- end example HTML -->
-            <div id="underBoard" style="overflow:hidden;font-family:'digital-clock-font'">
+            <div id="underBoard" style="overflow:hidden;font-family:'digital-clock-font';">
                 <div id="underTime" style="margin: 0px 20px; color: #ffffff; padding: 5px; background-color: rgba(0, 0, 0, 0.3); border-radius: 5px; font-size: 70px; position: relative; top: 50%; text-align: center; transform: perspective(1px) translateY(-50%);">
                     &nbsp;
                 </div>
@@ -462,14 +509,19 @@
 
         $(document).on('pageshow', '#chessboard', function () {
             init(cfg);
-            $("#overBoard").height(($(window).height() - $(window).width()) / 2);
-            $("#underBoard").height(($(window).height() - $(window).width()) / 2);
+            $("#overBoard, #underBoard").height(($(window).height() - $(window).width()) / 2);
 
-            //document.getElementById("overTime").innerHTML = "&nbsp";
-            //document.getElementById("underTime").innerHTML = "&nbsp";
+            $("#gameMenuX").on("tap", function () {
+                document.getElementById("gameMenu").style.display = "none";
+            });
 
+            $.event.special.tap.tapholdThreshold = 400,
+            $("#overBoard, #underBoard").on("taphold", function () {
+                document.getElementById("gameMenu").style.display = "initial";
+            });
         });
-        $(document).on('pagehide', '#chessboard', function () { if (typeof socket != 'undefined') socket.close(); board.clear(false) });
+
+        $(document).on('pagehide', '#chessboard', function () { if (typeof socket != 'undefined') socket.close(); board.clear(false); document.getElementById('endMenu').style.display = 'none'; document.getElementById('gameMenu').style.display = 'none' });
     </script>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="scripts/platformOverrides.js"></script>

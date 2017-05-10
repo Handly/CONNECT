@@ -111,6 +111,8 @@ function gameConnect(fullID) {
 
             window.version = gameInfo.player.version;
 
+            window.gameId = gameInfo.game.id;
+
             dests = gameInfo.possibleMoves;
 
             gameObject.player = gameInfo.game.player;
@@ -159,74 +161,12 @@ function gameConnect(fullID) {
                 var eventData = JSON.parse(event.data);
 
                 if (eventData.hasOwnProperty("t")) {
-
-                    if (eventData.t != "n") {
-                        if (eventData.t == "b") {
-                            eventData = eventData.d[0];
-
-                        }
-                        if (awaitingAck && eventData.t != "ack") {
-                            console.log("resending move...");
-                            sendMove();
-                        }
-                        else if (awaitingAck && eventData.t == "ack") {
-
-                            awaitingAck = false;
-                        }
-                        if (eventData.t == "resync") {
-                            console.log("resync message received!");
-                            syncFEN();
-
-                        }
-                        else if (eventData.t == "move") {
-
-                            gameObject.timeStamp = Date.now();
-
-                            latestMove = eventData.d.uci;
-
-                            board.position(eventData.d.fen);
-
-                            dests = eventData.d.dests;
-
-                            gameObject.player = (eventData.d.ply % 2 == 1) ? 'black' : 'white';
-
-                            if ('clock' in eventData.d) {
-                                gameObject.wClock = eventData.d.clock.white;
-                                gameObject.bClock = eventData.d.clock.black;
-                                updateClocks(true);
-                                gameObject.clock = (eventData.d.ply > 1) ? true : false;
-                            }
-                        }
-                        else if (eventData.t == "end") {
-                            if (gameObject.clock) {
-                                clearInterval(decrementer);
-                                gameObject.clock = false;
-                                clearInterval(writer);
-                                latestMove = null;
-                            }
-
-                            if ('d' in eventData) {
-                                document.getElementById("overTime").innerHTML = eventData.d;
-                                document.getElementById("underTime").innerHTML = "wins";
-                            }
-                            else {
-                                document.getElementById("overTime").innerHTML = "draw";
-                                document.getElementById("underTime").innerHTML = "game";
-                            }
-                        }
-                        if (eventData.hasOwnProperty("v")) {
-                            version = eventData.v;
-                        }
-                        if (latestMove != null)
-                            if (gameObject.player == gameObject.myColor) {
-
-                                if(clearInterval(writer)); // make sure cleared before setting
-                                writer = setInterval(lightLED, 250);
-
-                                writeSource = squares.indexOf(latestMove.slice(0, 2));
-                                writeTarget = squares.indexOf(latestMove.slice(2, 4));
-                            }
+                    if (eventData.t == "b") {
+                        for (var i = 0; i < eventData.d.length; i++)
+                            digestMSG(eventData.d[i]);
                     }
+                    else
+                        digestMSG(eventData);   
                 }
             };
 
@@ -265,8 +205,11 @@ function updateClocks(init) {
         if (gameObject.player == "black" || init) {
 
             blacks = gameObject.bClock - Math.floor((Date.now() - gameObject.timeStamp) / 1000);
-            if (blacks < 0)
+            if (blacks < 0) {
                 blacks = 0;
+                clearInterval(decrementer);
+                syncFEN();
+            }
             bHours = Math.floor(blacks / 3600);
             if (bHours < 10)
                 bHours = "0" + bHours;
@@ -283,8 +226,11 @@ function updateClocks(init) {
         if (gameObject.player == "white" || init) {
 
             whites = gameObject.wClock - Math.floor((Date.now() - gameObject.timeStamp) / 1000);
-            if (whites < 0)
+            if (whites < 0) {
                 whites = 0;
+                clearInterval(decrementer);
+                syncFEN();
+            }
             wHours = Math.floor(whites / 3600);
             if (wHours < 10)
                 wHours = "0" + wHours;
@@ -351,6 +297,37 @@ function sendMove(source, target) {
 
 }
 
+function rematch()
+{
+    var rematch = {
+        t: 'rematch-yes',
+        d: {}
+    };
+
+    socket.send(JSON.stringify(rematch));
+    console.log("rematch requested");
+}
+
+function resign() {
+    var resign = {
+        t: 'resign',
+        d: {}
+    };
+
+    socket.send(JSON.stringify(resign));
+    console.log("resign requested");
+}
+
+function takeback() {
+    var takeback = {
+        t: 'takeback-yes',
+        d: {}
+    };
+
+    socket.send(JSON.stringify(takeback));
+    console.log("takeback requested");
+}
+
 function syncFEN() {
     var xhttp = new XMLHttpRequest();
     var url = "http://en.lichess.org/" + currentGame;
@@ -362,6 +339,7 @@ function syncFEN() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var currentFEN = JSON.parse(xhttp.responseText).game.fen;
+            version = JSON.parse(xhttp.responseText).player.version;
             console.log(currentFEN);
             board.position(currentFEN);
         }
@@ -380,5 +358,88 @@ function ping() {
         t: 'p',
         v: version
     }));
+
+}
+
+function digestMSG(eventData) {
+
+    if (eventData.t != "n") {
+
+        if (awaitingAck && eventData.t != "ack") {
+            console.log("resending move...");
+            sendMove();
+        }
+        else if (awaitingAck && eventData.t == "ack") {
+
+            awaitingAck = false;
+        }
+        if (eventData.t == "resync") {
+            console.log("resync message received!");
+            syncFEN();
+
+        }
+        else if (eventData.t == "move") {
+
+            gameObject.timeStamp = Date.now();
+
+            latestMove = eventData.d.uci;
+
+            board.position(eventData.d.fen);
+
+            dests = eventData.d.dests;
+
+            gameObject.player = (eventData.d.ply % 2 == 1) ? 'black' : 'white';
+
+            if ('clock' in eventData.d) {
+                gameObject.wClock = eventData.d.clock.white;
+                gameObject.bClock = eventData.d.clock.black;
+                updateClocks(true);
+                gameObject.clock = (eventData.d.ply > 1) ? true : false;
+            }
+        }
+        else if (eventData.t == "end") {
+            if (gameObject.clock) {
+                clearInterval(decrementer);
+                gameObject.clock = false;
+                clearInterval(writer);
+                latestMove = null;
+            }
+
+            if ('d' in eventData) {
+                document.getElementById("overTime").innerHTML = eventData.d;
+                document.getElementById("underTime").innerHTML = "wins";
+            }
+            else {
+                document.getElementById("overTime").innerHTML = "draw";
+                document.getElementById("underTime").innerHTML = "game";
+            }
+            document.getElementById("analyzeLink").href = "https://en.lichess.org/" + gameId + "/" + gameObject.myColor;
+            document.getElementById("endMenu").style.display = "initial";
+        }
+            //else if (eventData.t == "redirect") {
+            //    socket.close();
+            //    gameConnect(eventData.d.id);
+            //}
+        else if (eventData.t == "reload")
+            syncFEN();
+        else if (eventData.t == "clock") {
+            gameObject.timeStamp = Date.now();
+            gameObject.wClock = eventData.d.white;
+            gameObject.bClock = eventData.d.black;
+            updateClocks(true);
+        }
+        if (eventData.hasOwnProperty("v")) {
+            version = eventData.v;
+        }
+        if (latestMove != null)
+            if (gameObject.player == gameObject.myColor) {
+
+                if (clearInterval(writer)); // make sure cleared before setting
+                writer = setInterval(lightLED, 250);
+
+                writeSource = squares.indexOf(latestMove.slice(0, 2));
+                writeTarget = squares.indexOf(latestMove.slice(2, 4));
+            }
+    }
 
 }
