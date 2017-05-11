@@ -37,7 +37,6 @@
             font-family: 'digital-clock-font';
             src: url('digital-7.mono.ttf');
         }
-
     </style>
 
 </head>
@@ -154,7 +153,7 @@
             $('#gameList').one('click', 'a.current', function () {
 
 
-                
+
 
                 console.log("connecting to game with id = " + $(this).attr('data-gameid'));
                 cfg.onDrop = eval($(this).attr('data-gametype'));
@@ -231,7 +230,7 @@
 
 
     <div data-role="page" id="bluetooth" data-theme="a">
-        <div data-role="header">
+        <div data-role="header" data-add-back-btn="true">
             <h1>Connect Board</h1>
         </div>
         <div data-role="main" class="ui-content">
@@ -293,26 +292,9 @@
                     latestMove = null;
                 }
 
-                if (squares[data[0]] in dests) {
-                    sendSource = squares[data[0]];
-                    clearInterval(writer);
-                    latestMove = null;
-                    ble.write(device_id, service_id, characteristic_id, data.buffer);
-                    console.log("sendSource is now " + sendSource);
+                sendSquares(squares[data[0]],data);
 
-                }
-                else if (sendSource != null)
-                    if (dests[sendSource].includes(squares[data[0]])) {
-                        sendTarget = squares[data[0]];
-                        console.log("sendTarget is now " + sendTarget);
-                    }
 
-                if (sendSource != null && sendTarget != null) {
-                    console.log("sending move " + sendSource + "" + sendTarget);
-                    sendMove(sendSource, sendTarget);
-                    sendSource = null;
-                    sendTarget = null;
-                }
 
             }
             ble.startNotification(device_id,
@@ -320,6 +302,45 @@
                   characteristic_id, onData, function () { console.log("failure to start notification") });
 
 
+        }
+
+        function sendSquares(square,data) {
+
+            if (square in dests) {
+                //if(sendSource != null)
+                //document.getElementsByClassName("square-" + sendSource)[0].style.boxShadow = "none";
+                sendSource = square;
+                
+                //var element = document.getElementsByClassName("square-" + sendSource)[0];
+                //console.log(element.style.backgroundColor);
+                //element.style.backgroundColor = "#ff0000";
+                //element.style.backgroundColor = element.style.backgroundColor;
+                //console.log(element.style.backgroundColor);
+                //$('#chessboard').trigger('create');
+                clearInterval(writer);
+                latestMove = null;
+                if(data)
+                ble.write(device_id, service_id, characteristic_id, data.buffer);
+                console.log("sendSource is now " + sendSource);
+
+            }
+            else if (sendSource != null)
+                if (dests[sendSource].includes(square)) {
+                    sendTarget = square;
+                    //document.getElementsByClassName("square-" + sendTarget)[0].style.boxShadow = "0px 0px 10px #ff0000";
+                    console.log("sendTarget is now " + sendTarget);
+                }
+
+            if (sendSource != null && sendTarget != null) {
+                console.log("sending move " + sendSource + "" + sendTarget);
+                sendMove(sendSource, sendTarget);
+                
+                //document.getElementsByClassName("square-" + sendSource)[0].style.boxShadow = "none";
+                //document.getElementsByClassName("square-" + sendTarget)[0].style.boxShadow = "none";
+
+                sendSource = null;
+                sendTarget = null;
+            }
         }
 
         function disconnectDevice() {
@@ -433,7 +454,7 @@
         </div>
 
         <div id="gameMenu" style="height:100%; width:100%; background-color: rgba(255,255,255,0.90); position:absolute;top:0;left:0;z-index:1000;text-align: center;font-size:32px;display:none">
-            <span id="gameMenuX" style="float: right;font-size:2em;line-height:0px;position:relative;top:32px;right:5px;font-weight:200">X</span>
+            <span id="gameMenuX" style="font-size:2em;line-height:0px;position:absolute;top:32px;right:5px;font-weight:200">X</span>
             <div style="position: relative;top: 50%;transform: perspective(1px) translateY(-50%);margin: auto;">
                 <span style="font-size:1.25em;margin: 1em;border:none;border-bottom:2px solid;padding: .3em;margin-top:0px;line-height:0px"><b>Game Menu</b></span>
                 <br /><br /><br />
@@ -485,7 +506,7 @@
         };
 
         var cfg = {
-            draggable: true,
+            draggable: false,
             position: 'clear',
             onDrop: null
         };
@@ -504,6 +525,9 @@
                 }
 
             //--- end example JS ---
+
+            for (var i = 0; i < 64; i++)
+                $('.square-' + squares[i]).on('click', function () { console.log(this.dataset.square); sendSquares(this.dataset.square); });
 
         }; // end init()
 
