@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
 /* global ble, statusDiv, beatsPerMinute */
 /* jshint browser: true , devel: true*/
 
-// See BLE heart rate service http://goo.gl/wKH3X7
+// See BLE heart rate service https://goo.gl/wKH3X7
 var heartRate = {
     service: '180d',
     measurement: '2a37'
@@ -67,7 +67,7 @@ var app = {
     },
     onData: function(buffer) {
         // assuming heart rate measurement is Uint8 format, real code should check the flags
-        // See the characteristic specs http://goo.gl/N7S5ZS
+        // See the characteristic specs https://goo.gl/N7S5ZS
         var data = new Uint8Array(buffer);
         beatsPerMinute.innerHTML = data[1];
     },

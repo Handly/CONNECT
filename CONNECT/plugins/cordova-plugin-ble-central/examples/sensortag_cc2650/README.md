@@ -1,6 +1,6 @@
 ## SensorTag
 
-Interact with the [TI CC2650 SensorTag](http://www.ti.com/tool/CC2650STK)
+Interact with the [TI CC2650 SensorTag](https://www.ti.com/tool/CC2650STK)
 
  * Read Button Presses
  * Read Accelerometer/Magnetometer/Gyroscope Data
@@ -8,7 +8,7 @@ Interact with the [TI CC2650 SensorTag](http://www.ti.com/tool/CC2650STK)
 
 Hardware
 
- * [TI CC2650 SensorTag](http://www.ti.com/tool/CC2650STK)
+ * [TI CC2650 SensorTag](https://www.ti.com/tool/CC2650STK)
 
 Install
 

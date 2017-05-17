@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +18,13 @@
 /* jshint browser: true , devel: true*/
 'use strict';
 
-// http://processors.wiki.ti.com/index.php/SensorTag_User_Guide#Simple_Key_Service
+// https://processors.wiki.ti.com/index.php/SensorTag_User_Guide#Simple_Key_Service
 var button = {
     service: "FFE0",
     data: "FFE1", // Bit 2: side key, Bit 1- right key, Bit 0 –left key
 };
 
-//http://processors.wiki.ti.com/index.php/CC2650_SensorTag_User%27s_Guide
+//https://processors.wiki.ti.com/index.php/CC2650_SensorTag_User%27s_Guide
 var accelerometer = {
     service: "F000AA80-0451-4000-B000-000000000000",
     data: "F000AA81-0451-4000-B000-000000000000", // read/notify 3 bytes X : Y : Z

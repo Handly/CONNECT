@@ -1,13 +1,13 @@
 ## SensorTag
 
-Interact with the [TI SensorTag](http://www.ti.com/tool/cc2541dk-sensor)
+Interact with the [TI SensorTag](https://www.ti.com/tool/cc2541dk-sensor)
 
  * Read Button Presses
  * Read Accelerometer Data
 
 Hardware
 
- * [TI SensorTag](http://www.ti.com/tool/cc2541dk-sensor)
+ * [TI SensorTag](https://www.ti.com/tool/cc2541dk-sensor)
 
 Install
 

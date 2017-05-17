@@ -1,6 +1,6 @@
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    xmlns:rim="http://www.blackberry.com/ns/widgets"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<plugin xmlns="https://apache.org/cordova/ns/plugins/1.0"
+    xmlns:rim="https://www.blackberry.com/ns/widgets"
+    xmlns:android="https://schemas.android.com/apk/res/android"
     id="com.megster.cordova.ble.tests"
     version="0.1.9-dev">
     <name>Bluetooth Low Energy Plugin Tests</name>

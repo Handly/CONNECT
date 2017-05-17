@@ -8,7 +8,7 @@
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+# https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
@@ -79,5 +79,5 @@ If a script returns a non-zero exit code, then the parent cordova command will b
 We highly recommend writting your hooks using Node.js so that they are
 cross-platform. Some good examples are shown here:
 
-[http://devgirl.org/2013/11/12/three-hooks-your-cordovaphonegap-project-needs/](http://devgirl.org/2013/11/12/three-hooks-your-cordovaphonegap-project-needs/)
+[https://devgirl.org/2013/11/12/three-hooks-your-cordovaphonegap-project-needs/](https://devgirl.org/2013/11/12/three-hooks-your-cordovaphonegap-project-needs/)
 

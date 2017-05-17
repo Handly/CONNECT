@@ -1,10 +1,10 @@
 # RoboSmart
 
-Control a [SmartBotics](http://www.smartbotics.com/) RoboSmart Lightbulb from your phone.
+Control a [SmartBotics](https://www.smartbotics.com/) RoboSmart Lightbulb from your phone.
 
 Hardware
 
-    * [RoboSmart Lightbulb](http://www.smartbotics.com/#!where-to-buy/c1kf9)
+    * [RoboSmart Lightbulb](https://www.smartbotics.com/#!where-to-buy/c1kf9)
     
 Install
 

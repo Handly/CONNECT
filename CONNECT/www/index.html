@@ -5,7 +5,7 @@
         Customize the content security policy in the meta tag below as needed. Add 'unsafe-inline' to default-src to enable inline JavaScript.
         For details, see http://go.microsoft.com/fwlink/?LinkID=617521
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com http://en.lichess.org 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; connect-src *">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' gap: data: https://ssl.gstatic.com; connect-src 'self' https://sentry.io https://expl.lichess.org https://tablebase.lichess.org https://en.lichess.org wss://socket.lichess.org:*; script-src 'self' 'unsafe-eval' 'unsafe-inline'; child-src 'self' filesystem: gap://ready; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://en.lichess.org; media-src 'self'">
 
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
@@ -199,7 +199,7 @@
             });
 
             var xhttp = new XMLHttpRequest();
-            var url = "http://en.lichess.org/account/info/";
+            var url = "https://en.lichess.org/account/info/";
             var bustCache = '?' + new Date().getTime();
             xhttp.open("GET", url + bustCache, true);
 

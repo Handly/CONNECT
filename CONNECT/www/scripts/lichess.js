@@ -3,7 +3,7 @@
 // Login to Lichess
 function lichessLogin() {
     var xhttp = new XMLHttpRequest();
-    var url = "http://en.lichess.org/login";
+    var url = "https://en.lichess.org/login";
     var params = "username=" + $('#username').val() + "&password=" + $('#password').val();
     xhttp.open("POST", url, true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -23,7 +23,7 @@ function lichessLogin() {
 // Logout from Lichess
 function lichessLogout() {
     var xhttp = new XMLHttpRequest();
-    var url = "http://en.lichess.org/logout";
+    var url = "https://en.lichess.org/logout";
     xhttp.open("GET", url, true);
 
     // send the proper header information along with the request
@@ -42,7 +42,7 @@ function lichessLogout() {
 // returns true if logged in, false if "unauthorized"
 function getLichessUser() {
     var xhttp = new XMLHttpRequest();
-    var url = "http://en.lichess.org/account/info/";
+    var url = "https://en.lichess.org/account/info/";
     var bustCache = '?' + new Date().getTime();
     xhttp.open("GET", url + bustCache, true);
 
@@ -93,7 +93,7 @@ function gameConnect(fullID) {
         // ---------------- Store Game Info ----------------- //
 
         var xhttp = new XMLHttpRequest();
-        var url = "http://en.lichess.org/" + currentGame;
+        var url = "https://en.lichess.org/" + currentGame;
         xhttp.open("GET", url, true);
 
         xhttp.setRequestHeader("Accept", "application/vnd.lichess.v1+json");
@@ -135,7 +135,7 @@ function gameConnect(fullID) {
             var baseUrl = gameInfo.url.socket; // obtained from game creation API (`url.socket`)
             clientId = Math.random().toString(36).substring(2); // created and stored by the client
 
-            var socketUrl = 'ws://socket.en.lichess.org:9021' + baseUrl + '?sri=' + clientId + '&ran=--ranph--';
+            var socketUrl = 'wss://socket.lichess.org:9026' + baseUrl + '?sri=' + clientId;
 
             window.awaitingAck = false;
 
@@ -330,7 +330,7 @@ function takeback() {
 
 function syncFEN() {
     var xhttp = new XMLHttpRequest();
-    var url = "http://en.lichess.org/" + currentGame;
+    var url = "https://en.lichess.org/" + currentGame;
     xhttp.open("GET", url, true);
 
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

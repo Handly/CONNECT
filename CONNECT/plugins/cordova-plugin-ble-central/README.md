@@ -35,16 +35,16 @@ See the [examples](https://github.com/don/cordova-plugin-ble-central/tree/master
 
 ### PhoneGap Build
 
-Edit config.xml to install the plugin for [PhoneGap Build](http://build.phonegap.com).
+Edit config.xml to install the plugin for [PhoneGap Build](https://build.phonegap.com).
 
     <gap:plugin name="cordova-plugin-ble-central" source="npm" />
     <preference name="phonegap-version" value="cli-6.1.0" />
 
 ### PhoneGap Developer App
 
-This plugin is included in iOS and Android versions of the [PhoneGap Developer App](http://app.phonegap.com/).
+This plugin is included in iOS and Android versions of the [PhoneGap Developer App](https://app.phonegap.com/).
 
-Note that this plugin's id changed from `com.megster.cordova.ble` to `cordova-plugin-ble-central` as part of the migration from the [Cordova plugin repo](http://plugins.cordova.io/) to [npm](https://www.npmjs.com/).
+Note that this plugin's id changed from `com.megster.cordova.ble` to `cordova-plugin-ble-central` as part of the migration from the [Cordova plugin repo](https://plugins.cordova.io/) to [npm](https://www.npmjs.com/).
 
 ### iOS 10
 
@@ -705,7 +705,7 @@ This means that you need convert your data to ArrayBuffers before sending and fr
         return String.fromCharCode.apply(null, new Uint8Array(buffer));
     }
 
-You can read more about typed arrays in these articles on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) and [HTML5 Rocks](http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/).
+You can read more about typed arrays in these articles on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) and [HTML5 Rocks](https://www.html5rocks.com/en/tutorials/webgl/typed_arrays/).
 
 # UUIDs
 
