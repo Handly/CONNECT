@@ -43,12 +43,22 @@
 <body>
     <div data-role="page" id="home" data-theme="a">
 
+        <div data-role="header" id="header" style="background-color: transparent;color:#ffffff;text-shadow:0 0 0;border: none;font-size:40px;position:fixed;left:0px;top:0px;width:100px;height:100px; overflow:hidden;z-index:100;font-size:18px;text-align:center">
 
+            <div onclick="(function () { (document.getElementById('header').style.width == '100px') ? document.getElementById('header').style.width = '100%' : document.getElementById('header').style.width = '100px' })();" style="background-color: #4286f4;float:left;width:100px;height:100px">
+                <img style="position: relative;top: 22px;margin: auto;width:44px;" src="img/CONNECT_logo.svg" />
+            </div>
+            <div style="background-color: #f48642;float:left;height:50px;padding:0px 10px;">
+                <a href="#loginPanel" style="text-decoration:none" id="login-link">Login</a>
+                <span id="logout-btn">Logout</span>
+            </div>
+            <div style="background-color: #4286f4;float:left;height:50px;padding:0px 10px;">
+                <span onclick="loadGameList()">refresh</span>
+            </div>
+            <div style="background-color: #86f442;float:left;height:50px;padding:0px 10px;">
+                <a href="#bluetooth" style="text-decoration:none"><span>Connect Board</span></a>
+            </div>
 
-
-        <div data-role="header" style="background-color: #4286f4; color:#ffffff;text-shadow:0 0 0;border: none;font-size:40px;position:fixed;left:0px;top:0px;width:100px;height:100px; overflow:hidden;z-index:100">
-
-            <img style="width:44px;margin-left:28px;margin-top:22px" src="img/CONNECT_logo.svg" />
         </div>
         <div data-role="panel" id="loginPanel">
             <form>
@@ -80,7 +90,7 @@
 
             <div style="clear:both"></div><br />
 
-            <a href="#machine" style="text-decoration:none">
+            <a href="" style="text-decoration:none">
                 <div style="width: 85%; height: 110px; background-color: #f48642; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden">
                     <br />
                     <h2 style="color: #ffffff; text-shadow: none;">Play Local AI</h2>
@@ -89,7 +99,7 @@
 
             <div style="clear:both"></div><br />
 
-            <a href="#otb" style="text-decoration:none">
+            <a href="" style="text-decoration:none">
                 <div style="width: 85%; height: 110px; background-color: #86f442; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden">
                     <br />
                     <h2 style="color: #ffffff; text-shadow: none;">Record Game</h2>
@@ -101,12 +111,6 @@
             <div style="clear:both"></div><br />
             <!-- end example HTML -->
             <div style="width: 85%;padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden"><span style="color: #ffffff; text-shadow: none;font-size:10px">CONNECT v1.0 - Handly LLC &copy; 2017</span></div>
-
-            <a href="#loginPanel" id="login-link" class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-myicon">Login</a>
-            <button id="logout-btn" class="hidden ui-btn ui-btn-inline ui-btn-icon-left ui-icon-myicon">Logout</button>
-            <a href="#bluetooth" class="ui-btn">Connect Board</a>
-
-            <button onclick="loadGameList()">refresh</button>
 
 
         </div>
@@ -270,7 +274,9 @@
             });
 
             ble.scan([], 5, function (device) {
+                console.log(device.name.toLowerCase() == "connect v2" || device.name.toLowerCase() == "dual-spp");
                 $("#deviceList").append("<a style='text-decoration:none' href='#home' class='current' data-deviceid='" + device.id + "'><div style='width: 85%; height: 110px; background-color: #4286f4; padding: 5px 10px 10px 10px; margin: auto; text-align: center; overflow: hidden'><h2 style='color: #ffffff; text-shadow: none'>" + device.name + "</h2><p style='color: #ffffff; text-shadow: none'>" + device.id + " &middot; tap to connect</p></div></a><div style='clear:both'></div><br />");
+
             }, console.log('Could not find board'));
 
         }
@@ -292,7 +298,7 @@
                     latestMove = null;
                 }
 
-                sendSquares(squares[data[0]],data);
+                sendSquares(squares[data[0]], data);
 
 
 
@@ -304,13 +310,13 @@
 
         }
 
-        function sendSquares(square,data) {
+        function sendSquares(square, data) {
 
             if (square in dests) {
                 //if(sendSource != null)
                 //document.getElementsByClassName("square-" + sendSource)[0].style.boxShadow = "none";
                 sendSource = square;
-                
+
                 //var element = document.getElementsByClassName("square-" + sendSource)[0];
                 //console.log(element.style.backgroundColor);
                 //element.style.backgroundColor = "#ff0000";
@@ -319,8 +325,8 @@
                 //$('#chessboard').trigger('create');
                 clearInterval(writer);
                 latestMove = null;
-                if(data)
-                ble.write(device_id, service_id, characteristic_id, data.buffer);
+                if (data)
+                    ble.write(device_id, service_id, characteristic_id, data.buffer);
                 console.log("sendSource is now " + sendSource);
 
             }
@@ -334,7 +340,7 @@
             if (sendSource != null && sendTarget != null) {
                 console.log("sending move " + sendSource + "" + sendTarget);
                 sendMove(sendSource, sendTarget);
-                
+
                 //document.getElementsByClassName("square-" + sendSource)[0].style.boxShadow = "none";
                 //document.getElementsByClassName("square-" + sendTarget)[0].style.boxShadow = "none";
 
